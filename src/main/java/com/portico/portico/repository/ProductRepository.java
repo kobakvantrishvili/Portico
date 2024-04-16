@@ -29,7 +29,7 @@ public class ProductRepository {
         return CompletableFuture.runAsync(() -> {
             // Create an object to call the procedure
             SimpleJdbcCall addNewProductCall = new SimpleJdbcCall(jdbcTemplate)
-                    .withSchemaName("PorticoDB")
+                    .withSchemaName("DBTEAM1")
                     .withProcedureName("ADD_NEW_PRODUCT")
                     .declareParameters(
                             new SqlParameter("productName", Types.NVARCHAR),

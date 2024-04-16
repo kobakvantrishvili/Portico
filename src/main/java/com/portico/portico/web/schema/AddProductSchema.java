@@ -1,14 +1,16 @@
-package com.portico.portico.domain;
+package com.portico.portico.web.schema;
 
 import lombok.Data;
+
 import java.math.BigDecimal;
 
-@Data // auto-generates getters and setters
-public class Product {
-    private Integer id;
+@Data
+public class AddProductSchema {
     private String name;
     private String manufacturer;
     private BigDecimal cost;
     private String dimensions;
     private BigDecimal weight;
+    private Integer warehouseId;
+    private Integer stock;
 }
