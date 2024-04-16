@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Types;
 import java.util.List;
@@ -48,14 +49,11 @@ public class ProductRepository {
     }
 
     @Async
+    @Transactional
     public CompletableFuture<Void> deleteProductAsync(int productId) {
-        // Return CompletableFuture to run async task
         return CompletableFuture.runAsync(() -> {
-            // Define SQL query for deleting a product using productId parameter
-            String sql = "DELETE FROM product WHERE product_id = ?";
-
-            // Execute the delete operation
-            jdbcTemplate.update(sql, productId);
+            String deleteProductSql = "DELETE FROM product WHERE product_id = ?";
+            jdbcTemplate.update(deleteProductSql, productId);
         });
     }
 
