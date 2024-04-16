@@ -21,7 +21,6 @@ public class ProductController {
     }
 
 
-    @SuppressWarnings("Convert2MethodRef")
     @GetMapping(value = "/get/{id}")
     public CompletableFuture<ResponseEntity<Product>> getProductById(@PathVariable int id) {
         return productService.getProductByIdAsync(id)
