@@ -12,6 +12,4 @@ public class Product {
     private BigDecimal cost;
     private String dimensions;
     private BigDecimal weight;
-
-    private Set<ProductStorage> productStorage;
 }

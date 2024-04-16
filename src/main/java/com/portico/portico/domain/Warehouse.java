@@ -11,6 +11,4 @@ public class Warehouse {
     private String address;
     private String contactName;
     private String contactPhone;
-
-    private Set<ProductStorage> productStorage;
 }

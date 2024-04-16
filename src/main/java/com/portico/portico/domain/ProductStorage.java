@@ -8,7 +8,4 @@ public class ProductStorage {
     private Integer warehouseId;
     private Integer productId;
     private Integer stock;
-
-    private Product product;
-    private Warehouse warehouse;
 }

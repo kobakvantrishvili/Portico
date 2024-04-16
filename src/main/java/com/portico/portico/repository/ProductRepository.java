@@ -52,7 +52,7 @@ public class ProductRepository {
         // Return CompletableFuture to run async task
         return CompletableFuture.runAsync(() -> {
             // Define SQL query for deleting a product using productId parameter
-            String sql = "DELETE FROM Products WHERE product_id = ?";
+            String sql = "DELETE FROM product WHERE product_id = ?";
 
             // Execute the delete operation
             jdbcTemplate.update(sql, productId);
@@ -63,7 +63,7 @@ public class ProductRepository {
     public CompletableFuture<Product> getProductByIdAsync(int id) {
         // Use supplyAsync to execute the database query asynchronously
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM products WHERE product_id = ?";
+            String sql = "SELECT * FROM product WHERE product_id = ?";
             return jdbcTemplate.queryForObject(sql, productRowMapper, id);
         });
     }
@@ -72,7 +72,7 @@ public class ProductRepository {
     public CompletableFuture<List<Product>> getAllProductsAsync() {
         // Use supplyAsync to execute the database query asynchronously
         return CompletableFuture.supplyAsync(() -> {
-            String sql = "SELECT * FROM products";
+            String sql = "SELECT * FROM product";
             return jdbcTemplate.query(sql, productRowMapper);
         });
     }
