@@ -2,6 +2,8 @@ package com.portico.portico.repository;
 
 import com.portico.portico.domain.Product;
 import com.portico.portico.domain.ProductStorage;
+import org.springframework.core.env.Environment;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -9,8 +11,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Types;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -20,9 +20,12 @@ public class ProductRepository {
 
     // dependency injection
     private final JdbcTemplate jdbcTemplate;
+    private final Environment env;
 
-    public ProductRepository(JdbcTemplate jdbcTemplate) {
+    public ProductRepository(JdbcTemplate jdbcTemplate, Environment env) {
+
         this.jdbcTemplate = jdbcTemplate;
+        this.env = env;
     }
 
     @Async
@@ -30,7 +33,7 @@ public class ProductRepository {
         return CompletableFuture.runAsync(() -> {
             // Create an object to call the procedure
             SimpleJdbcCall addNewProductCall = new SimpleJdbcCall(jdbcTemplate)
-                    .withSchemaName("DBTEAM1")
+                    .withSchemaName(env.getProperty("spring.datasource.username"))
                     .withProcedureName("ADD_NEW_PRODUCT")
                     .declareParameters(
                             new SqlParameter("productName", Types.NVARCHAR),
@@ -49,8 +52,7 @@ public class ProductRepository {
     }
 
     @Async
-    @Transactional
-    public CompletableFuture<Void> deleteProductAsync(int productId) {
+    public CompletableFuture<Void> deleteProductAsync(Integer productId) {
         return CompletableFuture.runAsync(() -> {
             String deleteProductSql = "DELETE FROM product WHERE product_id = ?";
             jdbcTemplate.update(deleteProductSql, productId);
@@ -58,11 +60,15 @@ public class ProductRepository {
     }
 
     @Async
-    public CompletableFuture<Product> getProductByIdAsync(int id) {
+    public CompletableFuture<Product> getProductByIdAsync(Integer id) {
         // Use supplyAsync to execute the database query asynchronously
         return CompletableFuture.supplyAsync(() -> {
             String sql = "SELECT * FROM product WHERE product_id = ?";
-            return jdbcTemplate.queryForObject(sql, productRowMapper, id);
+            try {
+                return jdbcTemplate.queryForObject(sql, productRowMapper, id);
+            } catch (EmptyResultDataAccessException e) {
+                return null;
+            }
         });
     }
 

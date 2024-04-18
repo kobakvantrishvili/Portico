@@ -3,8 +3,8 @@ package com.portico.portico.web.controller;
 import com.portico.portico.application.ProductService;
 import com.portico.portico.domain.Product;
 import com.portico.portico.domain.ProductStorage;
-import com.portico.portico.mapper.AddProductMapper;
-import com.portico.portico.web.schema.AddProductSchema;
+import com.portico.portico.mapper.ProductMapper;
+import com.portico.portico.web.schema.ProductSchema;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("ALL")
 @Controller
-@RequestMapping("product")
+@RequestMapping("/product")
 public class ProductController {
     final ProductService productService;
 
@@ -22,23 +22,11 @@ public class ProductController {
         this.productService = productService;
     }
 
-
-    @GetMapping(value = "/get/{id}")
-    public CompletableFuture<ResponseEntity<Product>> getProductById(@PathVariable int id) {
-        return productService.getProductByIdAsync(id)
-                .thenApply(product -> ResponseEntity.ok(product));
-    }
-
-    @GetMapping(value = "/all")
-    public CompletableFuture<ResponseEntity<List<Product>>> getAllProducts() {
-        return productService.getAllProductsAsync()
-                .thenApply(products -> ResponseEntity.ok(products));
-    }
-
     @PostMapping(value = "/add")
-    public CompletableFuture<ResponseEntity<Void>> addProduct(@RequestBody AddProductSchema addProductSchema) {
-        Product product = AddProductMapper.mapToProduct(addProductSchema);
-        ProductStorage productStorage = AddProductMapper.mapToProductStorage(addProductSchema);
+    public CompletableFuture<ResponseEntity<Void>> addProduct(@RequestBody ProductSchema productSchema) {
+        Product product = ProductMapper.mapToProduct(productSchema);
+        ProductStorage productStorage = ProductMapper.mapToProductStorage(productSchema);
+
         return productService.addProductAsync(product, productStorage)
                 .thenApply(v -> ResponseEntity.noContent().build());
     }
@@ -49,4 +37,21 @@ public class ProductController {
                 .thenApply(v -> ResponseEntity.noContent().build());
     }
 
+    @GetMapping(value = "/get/{id}")
+    public CompletableFuture<ResponseEntity<Product>> getProductById(@PathVariable int id) {
+        return productService.getProductByIdAsync(id)
+                .thenApply(product -> {
+                    if (product != null) {
+                        return ResponseEntity.ok(product);
+                    } else {
+                        return ResponseEntity.notFound().build();
+                    }
+                });
+    }
+
+    @GetMapping(value = "/all")
+    public CompletableFuture<ResponseEntity<List<Product>>> getAllProducts() {
+        return productService.getAllProductsAsync()
+                .thenApply(products -> ResponseEntity.ok(products));
+    }
 }

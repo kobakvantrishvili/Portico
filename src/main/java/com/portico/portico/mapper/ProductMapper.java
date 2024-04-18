@@ -1,11 +1,11 @@
 package com.portico.portico.mapper;
 import com.portico.portico.domain.Product;
 import com.portico.portico.domain.ProductStorage;
-import com.portico.portico.web.schema.AddProductSchema;
+import com.portico.portico.web.schema.ProductSchema;
 
-public class AddProductMapper {
+public class ProductMapper {
 
-    public static Product mapToProduct(AddProductSchema schema) {
+    public static Product mapToProduct(ProductSchema schema) {
         // Create a new Product object
         Product product = new Product();
 
@@ -19,7 +19,7 @@ public class AddProductMapper {
         return product;
     }
 
-    public static ProductStorage mapToProductStorage(AddProductSchema schema) {
+    public static ProductStorage mapToProductStorage(ProductSchema schema) {
         // Create a new ProductStorage object
         ProductStorage productStorage = new ProductStorage();
 

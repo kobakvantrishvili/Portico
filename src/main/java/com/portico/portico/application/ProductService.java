@@ -18,22 +18,18 @@ public class ProductService {
     }
 
     public CompletableFuture<Void> addProductAsync(Product product, ProductStorage productStorage) {
-        // Call repository method asynchronously
         return productRepository.addProductAsync(product, productStorage);
     }
 
-    public CompletableFuture<Void> deleteProductAsync(int productId) {
-        // Call repository method asynchronously
+    public CompletableFuture<Void> deleteProductAsync(Integer productId) {
         return productRepository.deleteProductAsync(productId);
     }
 
-    public CompletableFuture<Product> getProductByIdAsync(int id) {
-        // Call repository method asynchronously
+    public CompletableFuture<Product> getProductByIdAsync(Integer id) {
         return productRepository.getProductByIdAsync(id);
     }
 
     public CompletableFuture<List<Product>> getAllProductsAsync() {
-        // Call repository method asynchronously
         return productRepository.getAllProductsAsync();
     }
 }

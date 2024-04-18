@@ -1,14 +1,13 @@
-package com.portico.portico.domain;
+package com.portico.portico.web.schema;
 
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
 @Data
-
-public class Order {
-    private Integer id;
+public class OrderSchema {
     private Integer carrierId;
     private Integer customerId;
     private BigDecimal totalCost;
@@ -16,5 +15,6 @@ public class Order {
     private Date orderDate;
     private Date deliveryDate;
     private String deliveryAddress;
-    private List<OrderContents> orderContents;
+
+    private List<OrderContentsSchema> orderContents;
 }
