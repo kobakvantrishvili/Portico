@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-
 public class Order {
     private Integer id;
     private Integer carrierId;
@@ -16,5 +15,5 @@ public class Order {
     private Date orderDate;
     private Date deliveryDate;
     private String deliveryAddress;
-    private List<OrderContents> orderContents;
+    private List<OrderContent> orderContents;
 }

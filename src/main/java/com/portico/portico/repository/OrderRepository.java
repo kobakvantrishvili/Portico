@@ -1,6 +1,7 @@
 package com.portico.portico.repository;
 
 import com.portico.portico.domain.Order;
+import com.portico.portico.domain.OrderContent;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,22 +31,12 @@ public class OrderRepository {
     @Async
     public CompletableFuture<Void> addOrderAsync(Order order) {
         return CompletableFuture.runAsync(() -> {
-            SimpleJdbcCall addNewOrderCall = new SimpleJdbcCall(jdbcTemplate)
-                    .withSchemaName(env.getProperty("spring.datasource.username"))
-                    .withProcedureName("CHECKOUT")
-                    .declareParameters(
-                            new SqlParameter("carrierId", Types.INTEGER),
-                            new SqlParameter("customerId", Types.INTEGER),
-                            new SqlParameter("orderDate", Types.DATE),
-                            new SqlParameter("totalCost", Types.DECIMAL),
-                            new SqlParameter("status", Types.VARCHAR),
-                            new SqlParameter("deliveryDate", Types.DATE),
-                            new SqlParameter("deliveryAddress", Types.VARCHAR)
-                    );
-            MapSqlParameterSource mapSqlParameterSource = getParamSource(order);
+            // Get the next order ID
+            int orderId = getNextOrderId();
+            order.setId(orderId);
 
-            // Execute procedure call
-            addNewOrderCall.execute(mapSqlParameterSource);
+            // Insert the order into the Orders table
+            insertOrder(order);
         });
     }
 
@@ -85,7 +76,7 @@ public class OrderRepository {
         });
     }
 
-    /* HELPER METHODS */
+    /* HELPERS */
     // Define a RowMapper to map ResultSet to Order object
     private final RowMapper<Order> orderRowMapper = (rs, rowNum) -> {
         Order order = new Order();
@@ -110,6 +101,26 @@ public class OrderRepository {
         mapSqlParameterSource.addValue("deliveryDate", order.getDeliveryDate());
         mapSqlParameterSource.addValue("deliveryAddress", order.getDeliveryAddress());
         return mapSqlParameterSource;
+    }
+
+    private int getNextOrderId() {
+        String sql = "SELECT COALESCE(MAX(order_id), 0) + 1 FROM orders";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    private void insertOrder(Order order) {
+        String insertOrderSql = "INSERT INTO orders (order_id, carrier_id, customer_id, order_date, total_cost, " +
+                "status, delivery_date, delivery_address) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(insertOrderSql,
+                order.getId(),
+                order.getCarrierId(),
+                order.getCustomerId(),
+                order.getOrderDate(),
+                order.getTotalCost(),
+                order.getStatus(),
+                order.getDeliveryDate(),
+                order.getDeliveryAddress());
     }
 
 }

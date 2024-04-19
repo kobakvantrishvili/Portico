@@ -1,7 +1,7 @@
 package com.portico.portico.mapper;
 
 import com.portico.portico.domain.Order;
-import com.portico.portico.domain.OrderContents;
+import com.portico.portico.domain.OrderContent;
 import com.portico.portico.web.schema.OrderContentsSchema;
 import com.portico.portico.web.schema.OrderSchema;
 
@@ -21,7 +21,7 @@ public class OrderMapper {
         order.setDeliveryAddress(orderSchema.getDeliveryAddress());
 
         // Map the list of orderContents from the orderSchema to the order object
-        List<OrderContents> orderContentsList = orderSchema.getOrderContents().stream()
+        List<OrderContent> orderContentsList = orderSchema.getOrderContents().stream()
                 .map(schema -> OrderMapper.toOrderContents(schema))
                 .collect(Collectors.toList());
 
@@ -30,8 +30,8 @@ public class OrderMapper {
         return order;
     }
 
-    public static OrderContents toOrderContents(OrderContentsSchema orderContentsSchema) {
-        OrderContents orderContents = new OrderContents();
+    public static OrderContent toOrderContents(OrderContentsSchema orderContentsSchema) {
+        OrderContent orderContents = new OrderContent();
         orderContents.setProductId(orderContentsSchema.getProductId());
         orderContents.setWarehouseId(orderContentsSchema.getWarehouseId());
         orderContents.setQuantity(orderContentsSchema.getQuantity());

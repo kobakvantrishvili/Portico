@@ -28,8 +28,8 @@ public class OrderController {
                 .thenApply(v -> ResponseEntity.ok().build());
     }
 
-    @DeleteMapping("/delete/{id}")
-    public CompletableFuture<ResponseEntity<Void>> deleteOrder(@PathVariable int id) {
+    @DeleteMapping("/cancel/{id}")
+    public CompletableFuture<ResponseEntity<Void>> cancelOrder(@PathVariable int id) {
         return orderService.deleteOrderAsync(id)
                 .thenApply(v -> ResponseEntity.noContent().build());
     }

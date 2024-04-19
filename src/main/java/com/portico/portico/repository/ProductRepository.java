@@ -82,7 +82,7 @@ public class ProductRepository {
     }
 
 
-    /* HELPER METHODS */
+    /* HELPERS */
 
     // RowMapper to map ResultSet to Product object
     private static final RowMapper<Product> productRowMapper = (rs, rowNum) -> {
