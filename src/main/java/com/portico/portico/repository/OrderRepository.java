@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.Types;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -37,6 +38,22 @@ public class OrderRepository {
 
             // Insert the order into the Orders table
             insertOrder(order);
+        });
+    }
+
+    @Async
+    public CompletableFuture<Void> updateOrderCostAsync(Integer orderId){
+        return CompletableFuture.runAsync(() -> {
+            SimpleJdbcCall addNewOrderCall = new SimpleJdbcCall(jdbcTemplate)
+                    .withSchemaName(env.getProperty("spring.datasource.username"))
+                    .withProcedureName("UPDATE_COST")
+                    .declareParameters(
+                            new SqlParameter("orderID", Types.INTEGER)
+                    );
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+            mapSqlParameterSource.addValue("orderID", orderId);
+
+            addNewOrderCall.execute(mapSqlParameterSource);
         });
     }
 

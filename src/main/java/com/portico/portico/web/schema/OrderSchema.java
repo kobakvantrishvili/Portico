@@ -10,7 +10,6 @@ import java.util.List;
 public class OrderSchema {
     private Integer carrierId;
     private Integer customerId;
-    private BigDecimal totalCost;
     private String status;
     private Date orderDate;
     private Date deliveryDate;

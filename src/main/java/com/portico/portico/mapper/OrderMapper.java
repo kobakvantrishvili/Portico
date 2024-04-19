@@ -14,7 +14,6 @@ public class OrderMapper {
         Order order = new Order();
         order.setCarrierId(orderSchema.getCarrierId());
         order.setCustomerId(orderSchema.getCustomerId());
-        order.setTotalCost(orderSchema.getTotalCost());
         order.setStatus(orderSchema.getStatus());
         order.setOrderDate(orderSchema.getOrderDate());
         order.setDeliveryDate(orderSchema.getDeliveryDate());

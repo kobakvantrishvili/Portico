@@ -47,7 +47,8 @@ public class OrderService {
                                             productStorageRepository.updateProductStorageAsync(productStorage);
                                         });
                                 CompletableFuture<Void> orderContentFuture = orderContentsRepository.addOrderContentAsync(orderContent);
-                                return CompletableFuture.allOf(productStorageFuture, orderContentFuture);
+                                CompletableFuture<Void> orderFuture = orderRepository.updateOrderCostAsync(order.getId());
+                                return CompletableFuture.allOf(productStorageFuture, orderContentFuture, orderFuture);
                             })
                             .collect(Collectors.toList());
 
