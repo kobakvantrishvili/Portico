@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("ALL")
-@Controller
+@RestController
 @RequestMapping("/product")
 public class ProductController {
     final ProductService productService;

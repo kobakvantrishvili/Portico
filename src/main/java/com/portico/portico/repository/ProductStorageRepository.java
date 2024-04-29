@@ -46,6 +46,14 @@ public class ProductStorageRepository {
         });
     }
 
+    @Async
+    public CompletableFuture<Void> restockProductAsync(int productId, int warehouseId, int quantityReceived) {
+        return CompletableFuture.runAsync(() -> {
+            String procedureCall = "{ call restock(?, ?, ?) }";
+            jdbcTemplate.update(procedureCall, productId, warehouseId, quantityReceived);
+        });
+    }
+
     /* HELPERS */
     // Define a RowMapper to map the ResultSet to a ProductStorage object
     private final RowMapper<ProductStorage> productStorageRowMapper = (rs, rowNum) -> {
