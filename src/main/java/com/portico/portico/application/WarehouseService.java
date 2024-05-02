@@ -21,7 +21,18 @@ public class WarehouseService {
     }
 
     public CompletableFuture<Warehouse> getWarehouseAsync(Integer warehouseId) {
-        return warehouseRepository.getWarehouseAsync(warehouseId);
+        CompletableFuture<Warehouse> warehouseFuture = warehouseRepository.getWarehouseAsync(warehouseId);
+        CompletableFuture<List<ProductStorage>> productStoragesFuture = productStorageRepository.getWarehouseProductsAsync(warehouseId);
+
+        return warehouseFuture.thenCombine(productStoragesFuture, (warehouse, productStorages) -> {
+            try{
+                warehouse.setProductStorages(productStorages);
+            }
+            catch (NullPointerException e){
+                return null;
+            }
+            return warehouse;
+        });
     }
 
     public CompletableFuture<List<Warehouse>> getAllWarehousesAsync() {

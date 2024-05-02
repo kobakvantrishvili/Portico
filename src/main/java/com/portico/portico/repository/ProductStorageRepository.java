@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Repository
@@ -35,7 +37,7 @@ public class ProductStorageRepository {
 
 
     @Async
-    public CompletableFuture<ProductStorage> getProductStorageAsync(int productId, int warehouseId) {
+    public CompletableFuture<ProductStorage> getProductStorageAsync(Integer productId, Integer warehouseId) {
         return CompletableFuture.supplyAsync(() -> {
             String sql = "SELECT * FROM Product_Storage WHERE product_id = ? AND warehouse_id = ?";
             try {
@@ -47,7 +49,19 @@ public class ProductStorageRepository {
     }
 
     @Async
-    public CompletableFuture<Void> restockProductAsync(int productId, int warehouseId, int quantityReceived) {
+    public CompletableFuture<List<ProductStorage>> getWarehouseProductsAsync(Integer warehouseId) {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "SELECT * FROM Product_Storage WHERE warehouse_id = ?";
+            try {
+                return jdbcTemplate.query(sql, productStorageRowMapper, warehouseId);
+            } catch (EmptyResultDataAccessException e) {
+                return Collections.emptyList();
+            }
+        });
+    }
+
+    @Async
+    public CompletableFuture<Void> restockProductAsync(Integer productId, Integer warehouseId, Integer quantityReceived) {
         return CompletableFuture.runAsync(() -> {
             String procedureCall = "{ call restock(?, ?, ?) }";
             jdbcTemplate.update(procedureCall, productId, warehouseId, quantityReceived);

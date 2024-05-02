@@ -21,11 +21,11 @@ public class OrderController {
     }
 
     @PostMapping("/add")
-    public CompletableFuture<ResponseEntity<Void>> addOrder(@RequestBody OrderSchema orderSchema) {
+    public CompletableFuture<ResponseEntity<Integer>> addOrder(@RequestBody OrderSchema orderSchema) {
         Order order = OrderMapper.mapToOrder(orderSchema);
 
         return orderService.addOrderAsync(order)
-                .thenApply(v -> ResponseEntity.ok().build());
+                .thenApply(v -> ResponseEntity.ok(v));
     }
 
     @DeleteMapping("/cancel/{id}")

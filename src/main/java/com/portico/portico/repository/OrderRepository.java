@@ -30,14 +30,15 @@ public class OrderRepository {
     }
 
     @Async
-    public CompletableFuture<Void> addOrderAsync(Order order) {
-        return CompletableFuture.runAsync(() -> {
+    public CompletableFuture<Integer> addOrderAsync(Order order) {
+        return CompletableFuture.supplyAsync(() -> {
             // Get the next order ID
-            int orderId = getNextOrderId();
+            Integer orderId = getNextOrderId();
             order.setId(orderId);
 
             // Insert the order into the Orders table
             insertOrder(order);
+            return orderId;
         });
     }
 

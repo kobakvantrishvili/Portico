@@ -17,7 +17,7 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public CompletableFuture<Void> addProductAsync(Product product, ProductStorage productStorage) {
+    public CompletableFuture<Integer> addProductAsync(Product product, ProductStorage productStorage) {
         return productRepository.addProductAsync(product, productStorage);
     }
 

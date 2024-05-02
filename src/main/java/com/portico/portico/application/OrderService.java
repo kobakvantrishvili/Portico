@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -28,7 +27,7 @@ public class OrderService {
 
 
     @Transactional
-    public CompletableFuture<Void> addOrderAsync(Order order) {
+    public CompletableFuture<Integer> addOrderAsync(Order order) {
         return orderRepository.addOrderAsync(order)
                 .thenComposeAsync(v -> {
                     // For each OrderContent, add it asynchronously and collect the futures in a list
@@ -50,9 +49,10 @@ public class OrderService {
                                 CompletableFuture<Void> orderFuture = orderRepository.updateOrderCostAsync(order.getId());
                                 return CompletableFuture.allOf(productStorageFuture, orderContentFuture, orderFuture);
                             })
-                            .collect(Collectors.toList());
+                            .toList();
 
-                    return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+                    return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                            .thenApply(z -> order.getId());
                 });
     }
 
@@ -65,7 +65,12 @@ public class OrderService {
         CompletableFuture<List<OrderContent>> orderContentsFuture = orderContentsRepository.getOrderContentsByOrderIdAsync(orderId);
 
         return orderFuture.thenCombine(orderContentsFuture, (order, orderContents) -> {
-            order.setOrderContents(orderContents);
+            try {
+                order.setOrderContents(orderContents);
+            }
+            catch (NullPointerException e){
+                return null;
+            }
             return order;
         });
     }

@@ -23,12 +23,12 @@ public class ProductController {
     }
 
     @PostMapping(value = "/add")
-    public CompletableFuture<ResponseEntity<Void>> addProduct(@RequestBody ProductSchema productSchema) {
+    public CompletableFuture<ResponseEntity<Integer>> addProduct(@RequestBody ProductSchema productSchema) {
         Product product = ProductMapper.mapToProduct(productSchema);
         ProductStorage productStorage = ProductMapper.mapToProductStorage(productSchema);
 
         return productService.addProductAsync(product, productStorage)
-                .thenApply(v -> ResponseEntity.noContent().build());
+                .thenApply(v -> ResponseEntity.ok(v));
     }
 
     @DeleteMapping(value = "/delete/{id}")

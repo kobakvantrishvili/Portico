@@ -6,6 +6,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
@@ -13,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import java.sql.Types;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Repository
@@ -29,8 +31,8 @@ public class ProductRepository {
     }
 
     @Async
-    public CompletableFuture<Void> addProductAsync(Product product, ProductStorage productStorage) {
-        return CompletableFuture.runAsync(() -> {
+    public CompletableFuture<Integer> addProductAsync(Product product, ProductStorage productStorage) {
+        return CompletableFuture.supplyAsync(() -> {
             // Create an object to call the procedure
             SimpleJdbcCall addNewProductCall = new SimpleJdbcCall(jdbcTemplate)
                     .withSchemaName(env.getProperty("spring.datasource.username"))
@@ -42,12 +44,20 @@ public class ProductRepository {
                             new SqlParameter("productDimensions", Types.NVARCHAR),
                             new SqlParameter("productWeight", Types.DECIMAL),
                             new SqlParameter("productStock", Types.INTEGER),
-                            new SqlParameter("warehouseId", Types.INTEGER)
+                            new SqlParameter("warehouseId", Types.INTEGER),
+                            new SqlOutParameter("productId", Types.INTEGER)
                     );
+
+            // Prepare parameters
             MapSqlParameterSource mapSqlParameterSource = getParamSource(product, productStorage);
 
             // Execute procedure call
-            addNewProductCall.execute(mapSqlParameterSource);
+            Map<String, Object> resultMap = addNewProductCall.execute(mapSqlParameterSource);
+
+            // Retrieve the product ID from the result map
+            Integer productId = (Integer) resultMap.get("productId");
+
+            return productId;
         });
     }
 
