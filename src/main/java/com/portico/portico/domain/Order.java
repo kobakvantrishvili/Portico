@@ -1,5 +1,6 @@
 package com.portico.portico.domain;
 
+import com.portico.portico.domain.enums.OrderStatus;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -11,7 +12,7 @@ public class Order {
     private Integer carrierId;
     private Integer customerId;
     private BigDecimal totalCost;
-    private String status;
+    private OrderStatus status;
     private Date orderDate;
     private Date deliveryDate;
     private String deliveryAddress;

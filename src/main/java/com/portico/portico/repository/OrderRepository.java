@@ -2,6 +2,7 @@ package com.portico.portico.repository;
 
 import com.portico.portico.domain.Order;
 import com.portico.portico.domain.OrderContent;
+import com.portico.portico.domain.enums.OrderStatus;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -94,6 +95,15 @@ public class OrderRepository {
         });
     }
 
+    @Async
+    public CompletableFuture<Void> updateOrderStatusAsync(int orderId, OrderStatus status) {
+        return CompletableFuture.runAsync(() -> {
+            String updateSql = "UPDATE orders SET status = ? WHERE order_id = ?";
+            jdbcTemplate.update(updateSql, status.getDisplayValue(), orderId);
+        });
+    }
+
+
     /* HELPERS */
     // Define a RowMapper to map ResultSet to Order object
     private final RowMapper<Order> orderRowMapper = (rs, rowNum) -> {
@@ -102,7 +112,7 @@ public class OrderRepository {
         order.setCarrierId(rs.getInt("carrier_id"));
         order.setCustomerId(rs.getInt("customer_id"));
         order.setTotalCost(rs.getBigDecimal("total_cost"));
-        order.setStatus(rs.getString("status"));
+        order.setStatus(OrderStatus.fromString(rs.getString("status")));
         order.setOrderDate(rs.getDate("order_date"));
         order.setDeliveryDate(rs.getDate("delivery_date"));
         order.setDeliveryAddress(rs.getString("delivery_address"));
@@ -115,7 +125,7 @@ public class OrderRepository {
         mapSqlParameterSource.addValue("customerId", order.getCustomerId());
         mapSqlParameterSource.addValue("orderDate", order.getOrderDate());
         mapSqlParameterSource.addValue("totalCost", order.getTotalCost());
-        mapSqlParameterSource.addValue("status", order.getStatus());
+        mapSqlParameterSource.addValue("status", order.getStatus().name());
         mapSqlParameterSource.addValue("deliveryDate", order.getDeliveryDate());
         mapSqlParameterSource.addValue("deliveryAddress", order.getDeliveryAddress());
         return mapSqlParameterSource;
@@ -136,7 +146,7 @@ public class OrderRepository {
                 order.getCustomerId(),
                 order.getOrderDate(),
                 order.getTotalCost(),
-                order.getStatus(),
+                order.getStatus().getDisplayValue(),
                 order.getDeliveryDate(),
                 order.getDeliveryAddress());
     }
