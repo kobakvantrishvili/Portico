@@ -9,7 +9,7 @@ A logistics platform built to automate and optimize inventory management using m
 ### Key Features
 - **Inventory Automation**: Automated inventory management using PL/SQL, reducing manual processes.
 - **Role-based Access**: Secure access control implemented with **JWT tokens** and **OAuth** for enhanced data privacy.
-- **Cargo Assignment**: Developed a web UI (**seperate project**) utilizing **RESTful APIs** to manage cargo assignments efficiently.
+- **Cargo Assignment**: Developed a web UI (**separate project**) utilizing **RESTful APIs** to communicate with this service to manage cargo assignments efficiently.
 
 ## Tech Stack
 
